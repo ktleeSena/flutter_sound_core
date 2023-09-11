@@ -302,7 +302,8 @@
                 {
                         int ln = (int)[data length];
                         int frameLn = ln/2;
-                        int frameLength =  8*frameLn;// Two octets for a frame (Monophony, INT Linear 16)
+                        //int frameLength =  8*frameLn;// Two octets for a frame (Monophony, INT Linear 16)
+			int frameLength = (int)(frameLn * (outputFormat.sampleRate / (double)m_sampleRate));//ktlee
 
                         playerFormat = [[AVAudioFormat alloc] initWithCommonFormat: AVAudioPCMFormatInt16 sampleRate: (double)m_sampleRate channels: m_numChannels interleaved: NO];
 
@@ -329,7 +330,7 @@
                         NSError* error;
                         [converter convertToBuffer: thePCMOutputBuffer error: &error withInputFromBlock: inputBlock];
                          // if (r == AVAudioConverterOutputStatus_HaveData || true)
-                        {
+                        /*{
                                 ++ready ;
                                 [playerNode scheduleBuffer: thePCMOutputBuffer  completionHandler:
                                 ^(void)
@@ -351,7 +352,11 @@
 
                                 }];
                                 return ln;
-                        }
+                        }*/
+			//ktlee ++++++++++
+			[playerNode scheduleBuffer: thePCMOutputBuffer completionHandler: nil];
+			return ln;
+			//----------------
                 } else
                 {
                         assert (ready == NB_BUFFERS);

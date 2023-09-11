@@ -76,11 +76,16 @@
         }
 
 
-        [inputNode installTapOnBus: 0 bufferSize: 20480 format: inputFormat block:
+        //[inputNode installTapOnBus: 0 bufferSize: 20480 format: inputFormat block:
+	[inputNode installTapOnBus: 0 bufferSize: sRate/10 format: inputFormat block://ktlee
         ^(AVAudioPCMBuffer * _Nonnull buffer, AVAudioTime * _Nonnull when)
         {
                 inputStatus = AVAudioConverterInputStatus_HaveData ;
-                AVAudioPCMBuffer* convertedBuffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat: recordingFormat frameCapacity: [buffer frameCapacity]];
+                //AVAudioPCMBuffer* convertedBuffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat: recordingFormat frameCapacity: [buffer frameCapacity]];
+		//ktlee ++++++++++
+		int recFrameCapacity = ([buffer frameLength] * (recordingFormat.sampleRate / inputFormat.sampleRate));
+		AVAudioPCMBuffer* convertedBuffer = [[AVAudioPCMBuffer alloc]initWithPCMFormat: recordingFormat frameCapacity: recFrameCapacity];
+		//----------------
 
 
                 AVAudioConverterInputBlock inputBlock =
@@ -99,7 +104,8 @@
                         return;
                 }
 
-                int n = [convertedBuffer frameLength];
+                //int n = [convertedBuffer frameLength];
+		int n = recFrameCapacity;//ktlee
                 int16_t *const  bb = [convertedBuffer int16ChannelData][0];
                 NSData* b = [[NSData alloc] initWithBytes: bb length: n * 2 ];
                 if (n > 0)
