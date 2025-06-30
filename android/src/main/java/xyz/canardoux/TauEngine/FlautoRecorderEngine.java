@@ -42,7 +42,7 @@ public class FlautoRecorderEngine
 	implements FlautoRecorderInterface
 {
 		private AudioRecord recorder = null;
-		//private Thread recordingThread = null;
+		private Thread recordingThread = null;
 		private boolean isRecording = false;
 		private double maxAmplitude = 0;
 		String filePath;
@@ -231,22 +231,29 @@ public class FlautoRecorderEngine
 		{
 			recorder.startRecording();
 			isRecording = true;
-			try {
-				writeAudioDataToFile(codec, sampleRate, path);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			p = new Runnable() {
+			// try {
+			// 	writeAudioDataToFile(codec, sampleRate, path);
+			// } catch (Exception e) {
+			// 	e.printStackTrace();
+			// }
+			// p = new Runnable() {
+			// 	@Override
+			// 	public void run() {
+
+			// 		if (isRecording) {
+			// 			int n = writeData(bufLn);
+
+			// 		}
+			// 	}
+			// };
+			// mainHandler.post(p);
+			recordingThread = new Thread(new Runnable() {
 				@Override
 				public void run() {
-
-					if (isRecording) {
-						int n = writeData(bufLn);
-
-					}
+					writeData(bufLn);
 				}
-			};
-			mainHandler.post(p);
+			}, "AudioRecorder Thread");
+			recordingThread.start();
 		} else
 		{
 			throw new Exception("Cannot initialize the AudioRecord");
@@ -260,6 +267,7 @@ public class FlautoRecorderEngine
 		{
 			try
 			{
+				isRecording = false;
 				recorder.stop();
 			} catch ( Exception e )
 			{
@@ -267,12 +275,20 @@ public class FlautoRecorderEngine
 
 			try
 			{
-				isRecording = false;
+				// isRecording = false;
 				recorder.release();
 			} catch ( Exception e )
 			{
 			}
 			recorder = null;
+		}
+		if (recordingThread != null) {
+			try {
+				recordingThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			recordingThread = null;
 		}
 		closeAudioDataFile(filePath);
 	}
