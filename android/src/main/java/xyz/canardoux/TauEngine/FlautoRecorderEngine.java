@@ -143,7 +143,8 @@ public class FlautoRecorderEngine
 				// gets the voice output from microphone to byte format
 				if ( Build.VERSION.SDK_INT >= 23 )
 				{
-						n = recorder.read(byteBuffer.array(), 0, bufferSize, AudioRecord.READ_NON_BLOCKING);
+						// n = recorder.read(byteBuffer.array(), 0, bufferSize, AudioRecord.READ_NON_BLOCKING);
+						n = recorder.read(byteBuffer.array(), 0, bufferSize, AudioRecord.READ_BLOCKING);//ktlee
 
 				}
 				else
