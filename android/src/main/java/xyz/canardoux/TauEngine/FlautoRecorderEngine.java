@@ -253,6 +253,7 @@ public class FlautoRecorderEngine
 					writeData(bufLn);
 				}
 			}, "AudioRecorder Thread");
+			recordingThread.setPriority(Thread.MAX_PRIORITY);
 			recordingThread.start();
 		} else
 		{
