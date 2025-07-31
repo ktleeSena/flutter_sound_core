@@ -106,9 +106,9 @@ class FlautoPlayerEngine extends FlautoPlayerEngineInterface {
 		if (Build.VERSION.SDK_INT >= 21) {
 			mSession = theSession;
 			AudioAttributes attributes = new AudioAttributes.Builder()
-					.setLegacyStreamType(AudioManager.STREAM_MUSIC)
-					.setUsage(AudioAttributes.USAGE_MEDIA)
-					.setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+					.setLegacyStreamType(AudioManager.STREAM_VOICE_CALL)
+					.setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+					.setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
 					.build();
 
 			AudioFormat format = new AudioFormat.Builder()
@@ -212,6 +212,7 @@ class FlautoPlayerEngine extends FlautoPlayerEngineInterface {
 		int ln = 0; // The number of bytes accepted (and perhaps played) by the device
 		if (Build.VERSION.SDK_INT >= 23) {
 			ln = audioTrack.write(data, 0, data.length, AudioTrack.WRITE_NON_BLOCKING);
+			return data.length;
 		} else {
 			ln = 0;
 		}
